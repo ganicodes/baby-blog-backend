@@ -3,14 +3,14 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 
 
-const User = require('../models/Users');
+const Users = require('../models/Users');
 const jwt = require('jsonwebtoken');
 
 router.post("/signup", async (req, res) => {
 
     try {
         //checking whether the user already logged in
-        let user = await User.findOne({ email: req.body.email });
+        let user = await Users.findOne({ email: req.body.email });
         if (user) {
             return res.status(400).json({ error: "Sorry a user with this email already exists" })
         }
@@ -20,7 +20,7 @@ router.post("/signup", async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
         // CREATING THE NEW USER IN DB
-        const newUser = new User({
+        const newUser = new Users({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
@@ -37,7 +37,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
 
     try {
-        const user = await User.findOne({ email: req.body.email });
+        const user = await Users.findOne({ email: req.body.email });
 
         if (!user) {
             res.status(404).json("User not found")
@@ -47,14 +47,13 @@ router.post("/login", async (req, res) => {
         if (!isPasswordCorrect) { res.status(400).json("Invalid credentials") }
 
         // generating auth-token using JWT
-        let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        let token = jwt.sign({ id: user._id, name: user.name }, process.env.JWT_SECRET);
 
         const { password, ...otherDetails } = user._doc;
         res.cookie("access_token", token, { httpOnly: true, }).status(200).json({ userdetails: otherDetails, success: true });
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).json("Internal server error");
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
 })
 
