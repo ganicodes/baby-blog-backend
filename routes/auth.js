@@ -12,7 +12,7 @@ router.post("/signup", async (req, res) => {
         //checking whether the user already logged in
         let user = await Users.findOne({ email: req.body.email });
         if (user) {
-            return res.status(400).json({ error: "Sorry a user with this email already exists" })
+            return res.status(400).json({ success: false, error: "Sorry a user with this email already exists" })
         }
 
         //SECURING THE PASSWORD BEFORE SAVING IT INTO DB
@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
         });
 
         await newUser.save();
-        res.status(200).json({ email: newUser.email, success: true })
+        res.status(200).json({ success: true, email: newUser.email })
     } catch (error) {
         console.log(error.message);
         res.status(500).json("Internal server error");
@@ -50,7 +50,7 @@ router.post("/login", async (req, res) => {
         let token = jwt.sign({ id: user._id, name: user.name }, process.env.JWT_SECRET);
 
         const { password, ...otherDetails } = user._doc;
-        res.cookie("access_token", token, { httpOnly: true, }).status(200).json({ userdetails: otherDetails, success: true });
+        res.cookie("access_token", token, { httpOnly: true, }).status(200).json({ success: true, userdetails: otherDetails });
 
     } catch (error) {
         res.status(500).json({ success: false, message: "Internal server error" });
