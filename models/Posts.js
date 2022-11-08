@@ -20,7 +20,7 @@ const postsSchema = new Schema({
         default: "unknown"
     },
     categories: {
-        type: [String]
+        type: String
     },
 }, { timestamps: true });
 

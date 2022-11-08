@@ -8,7 +8,6 @@ const verifyToken = (req, res, next) => {
         res.status(401).json({ success: false, message: "Not authenticated" })
     }
 
-
     const data = jwt.verify(token, process.env.JWT_SECRET);
     req.user = data;
     next();
