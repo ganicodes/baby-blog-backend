@@ -6,13 +6,18 @@ const multer = require('multer');
 const cors = require('cors')
 
 const app = express()
-const port = 8000
+const port = process.env.PORT || 8000
 
 app.use(express.json())
 app.use(cookieParser());
 
 //enabling cors
 app.use(cors())
+
+// default
+app.get("/", (req, res) => {
+    res.send("Up and working")
+})
 
 
 app.use('/api/auth', require("./routes/auth"));

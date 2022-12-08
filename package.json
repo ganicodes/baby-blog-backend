@@ -4,7 +4,8 @@
   "description": "This is backend for the full stack blog app",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Gani",
   "license": "ISC",
